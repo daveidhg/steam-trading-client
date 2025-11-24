@@ -26,4 +26,11 @@ class SteamClientService:
     def get_offer_status(self, offer_id):
         offers = self.client.get_trade_offers()
         return offers.get(offer_id, "unknown")
+    
+    def get_cs_inventory(self):
+        return self.client.get_my_inventory(GameOptions.CS)
+    
+    def testing(self):
+        print(self.client.get_wallet_balance())
+        print(self.client.get_friend_list(76561198209602109))
 
