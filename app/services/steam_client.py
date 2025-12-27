@@ -103,7 +103,17 @@ class SteamClientService:
         with open(SESSION_PATH, "w") as f:
             json.dump({"cookies": cookies}, f)
 
+    def retry_failed_request(func):
+        def wrapper(self, *args, **kwargs):
+            try:
+                return func(self, *args, **kwargs)
+            except Exception as e:
+                logging.warning(f"Steam request failed, retrying: {e}")
+                return func(self, *args, **kwargs)
+        return wrapper
 
+
+    @retry_failed_request
     def send_trade_offer(self, trade_url, asset_ids, message = ''):
         items = [Asset(asset_id, GameOptions.CS) for asset_id in asset_ids]
 
@@ -116,13 +126,15 @@ class SteamClientService:
 
         return offer.get("tradeofferid")
 
+    @retry_failed_request
     def cancel_trade_offer(self, offer_id):
         self.client.cancel_trade_offer(offer_id)
         return True
 
+    @retry_failed_request
     def get_offer_status(self, offer_id):
-        offers = self.client.get_trade_offers()
-        return offers.get(offer_id, "unknown")
+        return self.client.get_trade_offer(offer_id)
     
+    @retry_failed_request
     def get_cs_inventory(self):
         return self.client.get_my_inventory(GameOptions.CS)
