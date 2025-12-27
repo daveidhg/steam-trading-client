@@ -1,6 +1,7 @@
 from steampy.client import SteamClient
 from steampy.models import Asset, GameOptions
 from steampy.exceptions import InvalidCredentials
+from steampy import guard
 from requests import Session, cookies as cookie_utils
 import json
 import os
@@ -53,6 +54,7 @@ class SteamClientService:
             return False
 
         self.client = SteamClient(self.api_key)
+        self.client.steam_guard = guard.load_steam_guard(self.steam_guard)
 
         jar = cookie_utils.RequestsCookieJar()
         for c in cookies:
@@ -76,7 +78,7 @@ class SteamClientService:
     def _validate_session(self):
         try:
             # Authenticated endpoint
-            self.client.get_wallet_balance()
+            self.client.get_my_inventory(GameOptions.CS)
             return True
         except Exception:
             return False
@@ -102,11 +104,11 @@ class SteamClientService:
             json.dump({"cookies": cookies}, f)
 
 
-    def send_trade_offer(self, trade_url, asset_id, message = ''):
-        item = [Asset(asset_id, GameOptions.CS)]
+    def send_trade_offer(self, trade_url, asset_ids, message = ''):
+        items = [Asset(asset_id, GameOptions.CS) for asset_id in asset_ids]
 
         offer = self.client.make_offer_with_url(
-            item,
+            items,
             [],
             trade_url,
             message

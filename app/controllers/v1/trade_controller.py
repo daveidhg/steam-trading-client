@@ -25,7 +25,7 @@ class TradeController:
             methods=["GET"]
         )
         self.blueprint.add_url_rule(
-            "inventory",
+            "/inventory",
             view_func=self.get_cs_inventory,
             methods=["GET"]
         )
@@ -56,14 +56,14 @@ class TradeController:
         if not data:
             raise BadRequest("Missing JSON body.")
 
-        required_fields = ["partner_steam_id", "asset_ids"]
+        required_fields = ["partner_trade_url", "asset_ids"]
         for field in required_fields:
             if field not in data:
                 raise BadRequest(f"Missing required field: {field}")
 
         try:
             offer_id = self.steam_client_service.send_trade_offer(
-                partner_steam_id=data["partner_steam_id"],
+                trade_url=data["partner_trade_url"],
                 asset_ids=data["asset_ids"]
             )
 
