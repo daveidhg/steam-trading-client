@@ -70,6 +70,8 @@ class SteamClientService:
             jar.set_cookie(cookie)
         self.client._session.cookies = jar
 
+        self.client._access_token = self.client._set_access_token()
+
         # Mark the client as having a restored login so steampy will treat it authenticated
         self.client.was_login_executed = True
 
@@ -133,7 +135,7 @@ class SteamClientService:
 
     @retry_failed_request
     def get_offer_status(self, offer_id):
-        return self.client.get_trade_offer(offer_id)
+        return self.client.get_trade_offer(offer_id, use_webtoken=True)
     
     @retry_failed_request
     def get_cs_inventory(self):
