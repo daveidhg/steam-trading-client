@@ -10,7 +10,7 @@ class TradeController:
         self.blueprint = Blueprint("trade", __name__)
 
         self.blueprint.add_url_rule(
-            "/",
+            "",
             view_func=self.create_offer,
             methods=["POST"]
         )
