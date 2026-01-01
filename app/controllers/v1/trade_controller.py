@@ -21,7 +21,7 @@ class TradeController:
         )
         self.blueprint.add_url_rule(
             "/<offer_id>",
-            view_func=self.offer_status,
+            view_func=self.get_trade_offer,
             methods=["GET"]
         )
         self.blueprint.add_url_rule(
@@ -95,17 +95,17 @@ class TradeController:
             logging.error(f"Failed to cancel trade offer: {e}")
             raise InternalServerError("Failed to cancel trade offer.")
 
-    def offer_status(self, offer_id):
+    def get_trade_offer(self, offer_id):
         """
         Get status of an existing trade offer.
         """
         try:
-            status = self.steam_client_service.get_offer_status(offer_id)
+            offer = self.steam_client_service.get_trade_offer(offer_id)
 
             return jsonify({
                 "success": True,
                 "offer_id": offer_id,
-                "status": status
+                "offer": offer
             }), 200
 
         except Exception as e:

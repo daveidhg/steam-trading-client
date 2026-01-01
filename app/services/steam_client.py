@@ -134,7 +134,7 @@ class SteamClientService:
         return True
 
     @retry_failed_request
-    def get_offer_status(self, offer_id):
+    def get_trade_offer(self, offer_id):
         return self.client.get_trade_offer(offer_id, use_webtoken=True)
     
     @retry_failed_request
