@@ -12,11 +12,18 @@ STEAM_ID = os.getenv("STEAM_ID")
 STEAM_GUARD = os.getenv("STEAM_GUARD")
 STEAM_USERNAME = os.getenv("STEAM_USERNAME")
 STEAM_PASSWORD = os.getenv("STEAM_PASSWORD")
+STEAM_KEEPALIVE_SECONDS = int(os.getenv("STEAM_KEEPALIVE_SECONDS", "300"))
 
 def create_app():
     app = Flask(__name__)
 
-    client = SteamClientService(STEAM_API_KEY, STEAM_USERNAME, STEAM_PASSWORD, STEAM_GUARD)
+    client = SteamClientService(
+        STEAM_API_KEY,
+        STEAM_USERNAME,
+        STEAM_PASSWORD,
+        STEAM_GUARD,
+        keepalive_interval=STEAM_KEEPALIVE_SECONDS,
+    )
 
     trade_controller = TradeController(client)
 
